@@ -60,14 +60,3 @@ pub fn generate_ppm(grid: &[Vec<f32>], color: impl Fn(f32) -> [u8; 3]) -> std::i
 
     file.flush()
 }
-
-/// Simple terrain palette.
-pub fn terrain(value: f32) -> [u8; 3] {
-    match (value + 1.0) * 0.5 {
-        t if t < 0.35 => [30, 80, 170],   // water
-        t if t < 0.42 => [220, 200, 140], // sand
-        t if t < 0.65 => [60, 150, 70],   // grass
-        t if t < 0.85 => [120, 110, 100], // rock
-        _ => [245, 245, 250],             // snow
-    }
-}

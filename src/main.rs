@@ -5,12 +5,14 @@ use std::{
 };
 
 use crate::{
-    algorithms::grid_noise,
-    image::{generate_pgm, generate_ppm, terrain},
+    export::{generate_pgm, generate_ppm},
+    noise::grid_noise,
+    terrain::colors,
 };
 
-mod algorithms;
-mod image;
+mod export;
+mod noise;
+mod terrain;
 
 fn main() -> ExitCode {
     match run() {
@@ -33,8 +35,9 @@ fn run() -> Result<(), Error> {
 
     grid_noise(&mut grid, args[1].parse::<u32>().unwrap());
 
+    // Export to differents formats
     generate_pgm(&grid)?;
-    generate_ppm(&grid, &terrain)?;
+    generate_ppm(&grid, &colors)?;
 
     Ok(())
 }
