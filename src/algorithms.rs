@@ -46,8 +46,28 @@ fn noise(seed: u32, x: f32, y: f32) -> f32 {
     lerp(a, b, ty)
 }
 
+/// Fractal Brownian motion: sums several octaves of noise.
+/// Returns a value in range [-1, 1].
+fn fbm(seed: u32, x: f32, y: f32, octaves: u32, lacunarity: f32, gain: f32) -> f32 {
+    let mut sum = 0.0;
+    let mut amp = 1.0;
+    let mut freq = 1.0;
+    let mut norm = 0.0;
+
+    for i in 0..octaves {
+        // A different seed per octave avoids the octaves lining up
+        sum += amp * noise(seed.wrapping_add(i), x * freq, y * freq);
+        norm += amp;
+        amp *= gain;
+        freq *= lacunarity;
+    }
+
+    // divide by the total amplitude to stay in [-1, 1]
+    sum / norm
+}
+
 /// Apply a value noise algorithm to the given grid, using the given seed.
-pub fn grid_noise(grid: &mut Vec<Vec<f32>>, seed: u32) {
+pub fn grid_noise(grid: &mut [Vec<f32>], seed: u32) {
     let height = grid.len();
     if height == 0 {
         return;
@@ -58,7 +78,7 @@ pub fn grid_noise(grid: &mut Vec<Vec<f32>>, seed: u32) {
 
     for y in 0..height {
         for x in 0..width {
-            grid[y][x] = noise(seed, x as f32 * scale, y as f32 * scale);
+            grid[y][x] = fbm(seed, x as f32 * scale, y as f32 * scale, 6, 2.0, 0.5);
         }
     }
 }
