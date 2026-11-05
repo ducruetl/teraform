@@ -1,15 +1,15 @@
-use std::{
-    env,
-    io::{Error, ErrorKind},
-    process::ExitCode,
-};
+use std::{io::Error, process::ExitCode};
+
+use clap::Parser;
 
 use crate::{
+    config::{Args, ImageFormat},
     export::{generate_pgm, generate_ppm},
     noise::grid_noise,
     terrain::colors,
 };
 
+mod config;
 mod export;
 mod noise;
 mod terrain;
@@ -25,19 +25,16 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<(), Error> {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 2 {
-        return Err(Error::new(ErrorKind::Other, "Arguments missing"));
-    };
+    let args = Args::parse();
 
     let mut grid: Vec<Vec<f32>> = vec![vec![0.0; 1000]; 1000];
 
-    grid_noise(&mut grid, args[1].parse::<u32>().unwrap());
+    grid_noise(&mut grid, &args);
 
-    // Export to differents formats
-    generate_pgm(&grid)?;
-    generate_ppm(&grid, &colors)?;
+    match args.output.format {
+        ImageFormat::Pgm => generate_pgm(&grid, &args.output.path)?,
+        ImageFormat::Ppm => generate_ppm(&grid, &colors, &args.output.path)?,
+    };
 
     Ok(())
 }

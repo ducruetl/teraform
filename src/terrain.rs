@@ -1,3 +1,13 @@
+use clap::ValueEnum;
+
+#[derive(Copy, Clone, Debug, ValueEnum)]
+pub enum TerrainType {
+    /// Plain terrain
+    Flat,
+    /// Terrain fading to ocean at the edges
+    Island,
+}
+
 /// Simple terrain palette.
 pub fn colors(value: f32) -> [u8; 3] {
     match (value + 1.0) * 0.5 {

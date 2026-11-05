@@ -1,3 +1,5 @@
+use crate::config::Args;
+
 /// Generate a pseudo-random value in range [-1; 1] using the seed and the coordinates.
 fn hash(seed: u32, x: i32, y: i32) -> f32 {
     let mut hash = seed;
@@ -67,18 +69,26 @@ fn fbm(seed: u32, x: f32, y: f32, octaves: u32, lacunarity: f32, gain: f32) -> f
 }
 
 /// Apply a value noise algorithm to the given grid, using the given seed.
-pub fn grid_noise(grid: &mut [Vec<f32>], seed: u32) {
+pub fn grid_noise(grid: &mut [Vec<f32>], args: &Args) {
     let height = grid.len();
     if height == 0 {
         return;
     }
 
     let width = grid[0].len();
-    let scale = 0.01;
+
+    let frequency = 1.0 / args.scale;
 
     for y in 0..height {
         for x in 0..width {
-            grid[y][x] = fbm(seed, x as f32 * scale, y as f32 * scale, 6, 2.0, 0.5);
+            grid[y][x] = fbm(
+                args.seed,
+                x as f32 * frequency,
+                y as f32 * frequency,
+                args.octaves,
+                args.lacunarity,
+                args.persistence,
+            );
         }
     }
 }
