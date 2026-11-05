@@ -4,7 +4,10 @@ use std::{
     process::ExitCode,
 };
 
-use crate::{algorithms::grid_noise, image::generate_pgm};
+use crate::{
+    algorithms::grid_noise,
+    image::{generate_pgm, generate_ppm, terrain},
+};
 
 mod algorithms;
 mod image;
@@ -26,21 +29,12 @@ fn run() -> Result<(), Error> {
         return Err(Error::new(ErrorKind::Other, "Arguments missing"));
     };
 
-    let mut grid: Vec<Vec<f32>> = vec![vec![0.0; 128]; 128];
+    let mut grid: Vec<Vec<f32>> = vec![vec![0.0; 1000]; 1000];
 
     grid_noise(&mut grid, args[1].parse::<u32>().unwrap());
 
-    println!("Grid: ");
-
-    for x in grid.iter() {
-        print!("{{");
-        for y in x.iter() {
-            print!(" {y},");
-        }
-        println!(" }}");
-    }
-
-    generate_pgm(grid)?;
+    generate_pgm(&grid)?;
+    generate_ppm(&grid, &terrain)?;
 
     Ok(())
 }

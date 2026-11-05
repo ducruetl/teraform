@@ -1,16 +1,17 @@
+/// Generate a pseudo-random value in range [-1; 1] using the seed and the coordinates.
 fn hash(seed: u32, x: i32, y: i32) -> f32 {
-    let mut h = seed;
+    let mut hash = seed;
 
-    h ^= (x as u32).wrapping_mul(374761393);
-    h = h.rotate_left(13);
-    h ^= (y as u32).wrapping_mul(668265263);
+    hash ^= (x as u32).wrapping_mul(374761393);
+    hash = hash.rotate_left(13);
+    hash ^= (y as u32).wrapping_mul(668265263);
 
-    h = h.wrapping_mul(1274126177);
-    h ^= h >> 16;
-    h = h.wrapping_mul(2246822519);
-    h ^= h >> 13;
+    hash = hash.wrapping_mul(1274126177);
+    hash ^= hash >> 16;
+    hash = hash.wrapping_mul(2246822519);
+    hash ^= hash >> 13;
 
-    (h as f64 / u32::MAX as f64 * 2.0 - 1.0) as f32
+    (hash as f64 / u32::MAX as f64 * 2.0 - 1.0) as f32
 }
 
 fn fade(t: f32) -> f32 {
@@ -45,6 +46,7 @@ fn noise(seed: u32, x: f32, y: f32) -> f32 {
     lerp(a, b, ty)
 }
 
+/// Apply a value noise algorithm to the given grid, using the given seed.
 pub fn grid_noise(grid: &mut Vec<Vec<f32>>, seed: u32) {
     let height = grid.len();
     if height == 0 {
@@ -52,7 +54,7 @@ pub fn grid_noise(grid: &mut Vec<Vec<f32>>, seed: u32) {
     }
 
     let width = grid[0].len();
-    let scale = 0.1;
+    let scale = 0.01;
 
     for y in 0..height {
         for x in 0..width {
