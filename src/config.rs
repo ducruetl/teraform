@@ -34,9 +34,13 @@ pub struct Args {
     #[arg(long, default_value_t = 2.0, value_parser = positive_f32)]
     pub lacunarity: f32,
 
-    // Type of terrain generated. Accept "flat" or "island"
+    /// Type of terrain generated. Accept "flat" or "island"
     #[arg(long = "type", value_enum, default_value_t = TerrainType::Flat)]
     pub kind: TerrainType,
+
+    /// The strength used when generating an island terrain. A lower value means a wider island.
+    #[arg(long, default_value_t = 1.5, value_parser = positive_f32)]
+    pub island_strength: f32,
 
     /// Output file. Handled extensions: "pgm" and "ppm".
     #[arg(long, default_value = "terrain.ppm", value_parser = parse_output)]
